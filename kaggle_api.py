@@ -1,10 +1,6 @@
 import os
 from kaggle.api.kaggle_api_extended import KaggleApi
 
-# Establecer la ubicación del directorio de configuración de Kaggle
-config_dir = r"C:\Users\paula\Documents\IA\Quatri_6\BDA\BDA-P1\.kaggle"
-os.environ['KAGGLE_CONFIG_DIR'] = config_dir
-
 # Inicializa la API
 api = KaggleApi()
 api.authenticate()
