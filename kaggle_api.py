@@ -1,6 +1,11 @@
 import os
 from kaggle.api.kaggle_api_extended import KaggleApi
 
+#Tinc una carpeta creada a  C:\Users\paula\.kaggle amb la meva API
+#Si no, no es pot agafar les dades
+#cal fer un pip install kaggle abans
+
+
 # Inicializa la API
 api = KaggleApi()
 api.authenticate()
