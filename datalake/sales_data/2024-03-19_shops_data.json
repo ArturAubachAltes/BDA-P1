@@ -1,0 +1,24 @@
+{
+    "owner": "ricjaramillo",
+    "id": "sales",
+    "title": "sales",
+    "version": "8fafbf6d-cd97-4909-8487-d2023a27da7a",
+    "tags": [],
+    "visibility": "OPEN",
+    "files": [
+        {
+            "name": "SuperstoreSalesTraining.csv",
+            "sizeInBytes": 6676839,
+            "created": "2020-09-24T20:50:15.099Z",
+            "updated": "2020-09-24T20:50:15.099Z",
+            "createdBy": "ricjaramillo",
+            "updatedBy": "ricjaramillo"
+        }
+    ],
+    "status": "LOADED",
+    "created": "2020-09-24T18:59:40.424Z",
+    "updated": "2020-09-24T20:50:15.100Z",
+    "accessLevel": "READ",
+    "versionDois": [],
+    "isProject": false
+}
