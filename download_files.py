@@ -1,7 +1,8 @@
 import requests
 import os
+from datetime import datetime, timedelta
 import json
-from datetime import datetime
+
 
 
 def descargar_dataworld(quin_dels_dos: str = "income"):  # income o sales
@@ -29,8 +30,7 @@ def descargar_dataworld(quin_dels_dos: str = "income"):  # income o sales
         "accept": "application/json"
     }
 
-    file_url = f"https://download.data.world/file_download/{
-        owner}/{dataset_id}/{file_name}"
+    file_url = f"https://download.data.world/file_download/{owner}/{dataset_id}/{file_name}"
 
     response_file = requests.get(file_url, headers=headers, stream=True)
 
@@ -48,5 +48,25 @@ def descargar_dataworld(quin_dels_dos: str = "income"):  # income o sales
 
         print(f"Archivo {file_name} descargado y guardado en {data_path}")
     else:
-        print(f"Error al descargar el archivo {
-              file_name}: {response_file.status_code}")
+        print(f"Error al descargar el archivo {file_name}: {response_file.status_code}")
+
+
+def descargar_datasearch():
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    # URL de la API para realizar la consulta
+    url = 'https://services6.arcgis.com/Do88DoK2xjTUCXd1/arcgis/rest/services/OSM_Shops_NA/FeatureServer/0/query?outFields=*&where=1%3D1&f=json'
+
+    # Ahora compara la fecha más reciente con la fecha de hace 30 días
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        # Convertir la respuesta en formato JSON a un diccionario de Python
+        data = response.json()
+
+        with open(f'./datalake/shops_data/{today}_shops_data.json', 'w') as file:
+            json.dump(data, file, indent=4)
+
+        print("Datos descargados y guardados en la carpeta /datalake/shops_data")
+    else:
+        print(f"Error al realizar la solicitud: {response.status_code}")
