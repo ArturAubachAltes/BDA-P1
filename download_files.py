@@ -10,7 +10,7 @@ def descargar_dataworld(quin_dels_dos: str = "income"):  # income o sales
         owner = 'jonloyens'
         dataset_id = 'irs-income-by-zip-code'
         carpeta = 'income_data'
-        file_name = "IRSIncomeByZipCode_NoStateTotalsNoSmallZips.csv"
+        file_name = "IRSIncomeByZipCode_NoStateTotalsNoSmallZips.parquet"
 
     elif quin_dels_dos == "sales":
         owner = 'ricjaramillo'
@@ -64,7 +64,7 @@ def descargar_datasearch():
         # Convertir la respuesta en formato JSON a un diccionario de Python
         data = response.json()
 
-        with open(f'./datalake/shops_data/{today}_shops_data.json', 'w') as file:
+        with open(f'./datalake/shops_data/{today}_shops_data.parquet', 'w') as file:
             json.dump(data, file, indent=4)
 
         print("Datos descargados y guardados en la carpeta /datalake/shops_data")

@@ -63,4 +63,4 @@ def datacollectors(income= False, datasearch= False, sales= False):
 
 
 
-datacollectors(income=True, datasearch=True)
+datacollectors(income= True, datasearch= True, sales= True)
