@@ -18,3 +18,5 @@ shops_path = "/datalake/shops_data/"
 shops_data = spark.read.option("basePath", shops_path).json(shops_path)
 income_data = spark.read.option("basePath", income_path).csv(income_path)
 sales_data = spark.read.option("basePath", sales_path).csv(sales_path)
+
+sales_data.show()
