@@ -64,7 +64,7 @@ def descargar_datasearch():
         # Convertir la respuesta en formato JSON a un diccionario de Python
         data = response.json()
 
-        with open(f'./datalake/shops_data/{today}_shops_data.parquet', 'w') as file:
+        with open(f'./datalake/shops_data/{today}_shops_data.csv', 'w') as file:
             json.dump(data, file, indent=4)
 
         print("Datos descargados y guardados en la carpeta /datalake/shops_data")
