@@ -16,7 +16,6 @@ def descargar_spark(link:str):
   parquet_files = [file for file in files if file.endswith('.parquet')]
   first_parquet_file_shops = parquet_files[0] if parquet_files else None
 
-
   # Camí complet al primer fitxer CSV
   path = os.path.join(link, first_parquet_file_shops)
 
@@ -27,7 +26,8 @@ def descargar_spark(link:str):
   income.show()
   return income
 
-def formating(income: bool, sales: bool, shops: bool):
+
+def formating(income: bool = False, sales: bool = False, shops: bool = False):
     if income == True:
         descargar_spark("datalake/income_data/")
         print(f"Database income actualitzada")
@@ -39,6 +39,8 @@ def formating(income: bool, sales: bool, shops: bool):
     elif sales == True:
         descargar_spark("datalake/shops_data/")
         print(f"Database sales actualitzada")
+
+
 
 
 
