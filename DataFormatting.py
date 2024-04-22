@@ -10,21 +10,7 @@ import os
 if not 'spark' in globals():
   spark = SparkSession.builder.getOrCreate()
 
-def descargar_spark(link:str):
 
-  files = os.listdir(link)
-  parquet_files = [file for file in files if file.endswith('.parquet')]
-  first_parquet_file_shops = parquet_files[0] if parquet_files else None
-
-  # Camí complet al primer fitxer CSV
-  path = os.path.join(link, first_parquet_file_shops)
-
-  # Carreguem les dades, especificant que la primera fila és la capçalera
-  income = spark.read.option("header", "true").parquet(path)
-
-  # Mostrar les dades
-  income.show()
-  return income
 
 
 def formating(income: bool = False, sales: bool = False, shops: bool = False):
@@ -42,7 +28,25 @@ def formating(income: bool = False, sales: bool = False, shops: bool = False):
 
 
 
+import os
+from pyspark.sql import SparkSession
+import duckdb
 
+spark = SparkSession.builder.master("local[*]").appName("ParquetToDuckDB").getOrCreate()
+
+
+for source in ["flights","airbnb","weather"]:
+    df = spark.read.parquet(f"{source}_data.parquet")
+    pandas_df = df.toPandas()
+
+    con = duckdb.connect(database='/database.duckdb')
+
+    con.register(f"{source}_view", pandas_df)
+
+    con.execute(f"CREATE TABLE IF NOT EXISTS {source} AS SELECT * FROM {source}_view")
+
+    result = con.execute(f"SELECT * FROM {source} LIMIT 10").fetchall()
+    print(result)
 
 
 # # Llista tots els fitxers en el directori especificat i selecciona el primer CSV
