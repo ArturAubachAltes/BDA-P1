@@ -12,7 +12,7 @@ def DataFormatting(quines_act):
         .getOrCreate()
 
     # Conexión a la base de datos DuckDB
-    con = duckdb.connect(database='./database.duckdb')
+    con = duckdb.connect(database='./formatted_zone.duckdb')
 
     for data in quines_act:
         directory_path = os.path.join("./datalake/", data)
