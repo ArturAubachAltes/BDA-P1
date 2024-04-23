@@ -3,20 +3,19 @@ import os
 import duckdb
 import pandas as pd
 
-
 def DataFormatting(quines_act):
 
     # Inicialización de Spark
     spark = SparkSession.builder \
-        .config("spark.jars", "duckdb.jar") \
+        .config("spark.jars", "./duckdb.jar") \
         .appName("FormattedZone") \
         .getOrCreate()
 
     # Conexión a la base de datos DuckDB
-    con = duckdb.connect(database='/database.duckdb')
+    con = duckdb.connect(database='./database.duckdb')
 
     for data in quines_act:
-        directory_path = os.path.join("datalake", data)
+        directory_path = os.path.join("./datalake/", data)
         parquet_files = [f for f in os.listdir(directory_path) if f.endswith('.parquet')]
 
         parquet_path = os.path.join(directory_path, parquet_files[0])
@@ -40,6 +39,6 @@ def DataFormatting(quines_act):
     con.close()
 
 
-quines_act = ["income", "shops"]
+quines_act = ["income_data", "sales_data", "shops_data"]
 
 DataFormatting(quines_act)
