@@ -90,7 +90,56 @@ def DataQuality():
         .option("driver", "org.duckdb.DuckDBDriver") \
         .load()
 
-    # aplicar nateja noms columna
-    cleaned_shops = shops_df.select([col(c).alias(clean_column_name(c)) for c in shops_df.columns])
+    # canviem nom columnes perque no ens deixa accedir-hi si tenen caracters especials
+    # geometry.x
+    new_column_name = "geometry_x"
+    old_column_name = "geometry.x"
+    shops = shops.withColumnRenamed(old_column_name, new_column_name)
+
+    # geometry.y
+    new_column_name = "geometry_y"
+    old_column_name = "geometry.y"
+    shops = shops.withColumnRenamed(old_column_name, new_column_name)
+
+    # attributes.shop
+    new_column_name = "shop"
+    old_column_name = "attributes.shop"
+    shops = shops.withColumnRenamed(old_column_name, new_column_name)
+
+    # attributes.name
+    new_column_name = "name"
+    old_column_name = "attributes.name"
+    shops = shops.withColumnRenamed(old_column_name, new_column_name)
+
+    # attributes.osm_id2
+    new_column_name = "index"
+    old_column_name = "attributes.osm_id2"
+    shops = shops.withColumnRenamed(old_column_name, new_column_name)
+
+    # attributes.addr_postcode
+    new_column_name = "postcode"
+    old_column_name = "attributes.addr_postcode"
+    shops = shops.withColumnRenamed(old_column_name, new_column_name)
+
+    # ens quedem només amb columnes seleccionades
+    selected_columns = ['geometry_x', 'geometry_y', "shop", "name", "index", "postcode"]
+    shops_selected = shops.select(selected_columns)
+
+    # eliminar files que tinguin missings --> excepte les que tenen missings a postcode!!
+    shops_selected = shops_selected.filter(~(col("geometry_x").isNull() |
+                                    col("geometry_y").isNull() |
+                                    col("shop").isNull() |
+                                    col("name").isNull() |
+                                    col("index").isNull()))
+
+    # guardem taula
+    shops.write \
+        .format("jdbc") \
+        .option("url", "jdbc:duckdb:trusted_zone.duckdb") \
+        .option("dbtable", "shops_selected") \
+        .option("driver", "org.duckdb.DuckDBDriver") \
+        .mode("overwrite") \
+        .save()
     
+
     pass
