@@ -1,12 +1,10 @@
 # quality pipeline de les tres taules en duckdb
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
-import os
-import duckdb
-import pandas as pd
+from pyspark.sql.functions import col, lit, pi, atan, exp, when
+from uszipcode import SearchEngine
 
 
-def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False, grafiques:bool= False):
+def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False):
     #obrim sessió spark i duckdb
     spark = SparkSession.builder \
             .config("spark.jars", "./duckdb.jar") \
@@ -48,8 +46,7 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False, g
             .option("driver", "org.duckdb.DuckDBDriver") \
             .mode("overwrite") \
             .save()
-        
-        cleaned_income.show()
+
         print("Trusted zone de INCOME, actualitzat")
     
 
@@ -87,7 +84,6 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False, g
             .mode("overwrite") \
             .save()
 
-        sales_usa.show()
         print("Trusted zone de SALES, actualitzat")
 
     ###########
@@ -123,9 +119,9 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False, g
         old_column_name = "attributes.name"
         shops = shops.withColumnRenamed(old_column_name, new_column_name)
 
-        # attributes.osm_id2
+        # attributes.objectid
         new_column_name = "index"
-        old_column_name = "attributes.osm_id2"
+        old_column_name = "attributes.objectid"
         shops = shops.withColumnRenamed(old_column_name, new_column_name)
 
         # attributes.addr_postcode
@@ -133,19 +129,41 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False, g
         old_column_name = "attributes.addr_postcode"
         shops = shops.withColumnRenamed(old_column_name, new_column_name)
 
+        R = 6378137 #radi de la terra
+        shops = shops.withColumn('Longitude', (col('geometry_x') / lit(R)) * (180 / pi()))\
+                    .withColumn('Latitude',  (((pi() / 2) - 2 * atan(exp(-col('geometry_y') / lit(R)))) * (180 / pi())))\
+
+
         # ens quedem només amb columnes seleccionades
-        selected_columns = ['geometry_x', 'geometry_y', "shop", "name", "index", "postcode"]
-        shops_selected = shops.select(selected_columns)
+        selected_columns = ['latitude', 'longitude', "shop", "name", "index", "postcode"]
+        shops = shops.select(selected_columns)
 
-        # eliminar files que tinguin missings --> excepte les que tenen missings a postcode!!
-        shops_selected = shops_selected.filter(~(col("geometry_x").isNull() |
-                                        col("geometry_y").isNull() |
-                                        col("shop").isNull() |
-                                        col("name").isNull() |
-                                        col("index").isNull()))
+        shops = shops.filter(~(col("latitude").isNull() |
+                                col("longitude").isNull() |
+                                col("shop").isNull() |
+                                col("name").isNull() |
+                                col("index").isNull()))
+        
+        #Fer imputacio per zipcode
+        #Nomes mires aquelles files on el postcode es nulo
+        null_df = shops.filter(col("postcode").isNull())
 
+        collected_data = null_df.select('index').dropDuplicates().collect()
+
+        for i in collected_data:
+            #trobar la latitud i longitud
+            selected = shops.filter(shops.index == i[0]).dropDuplicates().collect()
+            #aplicar la funció
+            search = SearchEngine() 
+            result = search.by_coordinates(lat=selected[0].latitude, lng=selected[0].longitude, returns=1)
+            if result:
+                shops = shops.withColumn("postcode", when(shops.index == i[0], result[0].zipcode).otherwise(shops['postcode']))
+        
+        #Els que no shan pogut imputar s'eliminen
+        shops = shops.filter(~(col("postcode").isNull()))
+            
         # guardem taula
-        shops_selected.write \
+        shops.write \
             .format("jdbc") \
             .option("url", "jdbc:duckdb:trusted_zone.duckdb") \
             .option("dbtable", "cleaned_shops") \
@@ -153,10 +171,10 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False, g
             .mode("overwrite") \
             .save()
         
-        shops_selected.show()
+        shops.show()
         print("Trusted zone de SHOPS, actualitzat")
     spark.stop()
     
     
 
-DataQuality(income=True, datasearch=True, sales=True, grafiques=True)
+DataQuality(income=True, datasearch=True, sales=True)
