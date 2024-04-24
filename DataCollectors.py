@@ -61,4 +61,4 @@ def datacollectors(income= False, datasearch= False, sales= False):
                 print(f"Database {nom} no actualitzada")
 
 
-datacollectors(income=False, datasearch=False, sales=False)
+datacollectors(income=True, datasearch=True, sales=True)
