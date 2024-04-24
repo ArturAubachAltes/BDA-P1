@@ -17,3 +17,4 @@ def plots_num(spark,numerical_columns:list):
         fig2 = px.histogram(df_pd, x=feature, marginal="box", title=f'Histograma de {feature}')
         fig2.update_layout(xaxis_title=feature, yaxis_title='Conteo')
         fig2.show()
+
