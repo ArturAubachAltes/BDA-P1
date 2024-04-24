@@ -3,6 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 
 
+
 def DataQuality():
     #obrim sessió spark i duckdb
     spark = SparkSession.builder \
@@ -36,13 +37,15 @@ def DataQuality():
     cleaned_income = income_df.select([col(c).alias(clean_column_name(c)) for c in income_df.columns])
 
     # guardem taula
-    income_df.write \
+    cleaned_income.write \
         .format("jdbc") \
         .option("url", "jdbc:duckdb:trusted_zone.duckdb") \
         .option("dbtable", "cleaned_income") \
         .option("driver", "org.duckdb.DuckDBDriver") \
         .mode("overwrite") \
         .save()
+    
+    cleaned_income.show()
     
 
     ###########
@@ -70,7 +73,7 @@ def DataQuality():
     sales_usa = sales_usa.dropna(how="all") # eliminar files que missing a totes les columnes
 
     # guardem taula
-    sales_df.write \
+    sales_usa.write \
         .format("jdbc") \
         .option("url", "jdbc:duckdb:trusted_zone.duckdb") \
         .option("dbtable", "sales_usa") \
@@ -78,12 +81,13 @@ def DataQuality():
         .mode("overwrite") \
         .save()
 
+    sales_usa.show()
 
     ###########
     ## SHOPS ##
     ###########
     #carregar taula de duckdb
-    shops_df = spark.read \
+    shops = spark.read \
         .format("jdbc") \
         .option("url", "jdbc:duckdb:formatted_zone.duckdb") \
         .option("dbtable", "shops_data") \
@@ -133,7 +137,7 @@ def DataQuality():
                                     col("index").isNull()))
 
     # guardem taula
-    shops.write \
+    shops_selected.write \
         .format("jdbc") \
         .option("url", "jdbc:duckdb:trusted_zone.duckdb") \
         .option("dbtable", "shops_selected") \
@@ -141,5 +145,9 @@ def DataQuality():
         .mode("overwrite") \
         .save()
     
+    shops_selected.show()
+    spark.stop()
+    
+    
 
-    pass
+DataQuality()
