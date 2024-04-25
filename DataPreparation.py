@@ -166,7 +166,20 @@ def DataExploitation(mapa:bool= False, model_predictiu:bool= False):
         )
 
         # Mostrar el resultado final
-        pivot_df.show()
+        # Unir average_income con result_df
+        joined_df = average_income.join(result_df, on="ZIPCODE", how="outer")
+
+        # Unir el resultado anterior con pivot_df
+        final_df = joined_df.join(pivot_df, on="ZIPCODE", how="outer")
+        final_df.show()
+
+        final_df.write \
+            .format("jdbc") \
+            .option("url", "jdbc:duckdb:exploitation_zone.duckdb") \
+            .option("dbtable", "model_predictiu") \
+            .option("driver", "org.duckdb.DuckDBDriver") \
+            .mode("overwrite") \
+            .save()
 
     spark.stop()
 
