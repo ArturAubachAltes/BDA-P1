@@ -4,7 +4,7 @@ from pyspark.sql.functions import col, lit, pi, atan, exp, when
 from uszipcode import SearchEngine
 
 
-def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False):
+def DataQuality(income:bool= False, shops:bool= False, sales:bool= False):
     #obrim sessió spark i duckdb
     spark = SparkSession.builder \
             .config("spark.jars", "./duckdb.jar") \
@@ -90,7 +90,7 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False):
     ###########
     ## SHOPS ##
     ###########
-    if datasearch == True:
+    if shops == True:
         #carregar taula de duckdb
         shops = spark.read \
             .format("jdbc") \
@@ -181,4 +181,4 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False):
     
     
 
-#DataQuality(income=True, datasearch=True, sales=True)
+#DataQuality(income=True, shops=True, sales=True)

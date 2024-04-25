@@ -23,19 +23,19 @@ def main(data_source_income, landing_zone_income, trusted_zone_income, explorati
     format_=[]
     if landing_zone_income:
         format_.append("income_data")
-        print(f"Exploration Zone de la income_data actualitzada")
+        print(f"Landing Zone de la income_data actualitzada")
     if landing_zone_sales:
         format_.append("sales_data")
-        print(f"Exploration Zone de la sales_data actualitzada")
+        print(f"Landing Zone de la sales_data actualitzada")
     if landing_zone_shop:
         format_.append("shops_data")    
-        print(f"Exploration Zone de la shops_data actualitzada")
+        print(f"Landing Zone de la shops_data actualitzada")
     DataFormatting(format_)
 
     ############################
     ## DATA QUEALITY PIPELINE ##
     ############################
-    DataQuality(income=trusted_zone_income, datasearch=trusted_zone_sales, sales=trusted_zone_shop)
+    DataQuality(income=trusted_zone_income, shops=trusted_zone_shop, sales=trusted_zone_sales)
 
     ##############################
     ## DATA PREPARAION PIPELINE ##

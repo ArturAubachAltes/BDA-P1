@@ -171,7 +171,8 @@ def DataExploitation(mapa:bool= False, model_predictiu:bool= False):
 
         # Unir el resultado anterior con pivot_df
         final_df = joined_df.join(pivot_df, on="ZIPCODE", how="outer")
-        final_df.show()
+
+        final_df = final_df.dropna(subset=["shop_mas_comun_1"]) 
 
         final_df.write \
             .format("jdbc") \
@@ -184,4 +185,4 @@ def DataExploitation(mapa:bool= False, model_predictiu:bool= False):
     spark.stop()
 
 
-#DataExploitation(mapa= True, model_predictiu= True)
+DataExploitation(mapa= True, model_predictiu= True)
