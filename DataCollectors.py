@@ -57,9 +57,6 @@ def datacollectors(income= False, datasearch= False, sales= False):
                     funcio(nom)
                 else:
                     funcio()
-                print(f"Database {nom} actualitzada")
-            else:
-                print(f"Database {nom} no actualitzada")
+            
 
-
-datacollectors(income=False, datasearch=False, sales=False)
+#datacollectors(income=False, datasearch=False, sales=False)

@@ -184,4 +184,4 @@ def DataExploitation(mapa:bool= False, model_predictiu:bool= False):
     spark.stop()
 
 
-DataExploitation(mapa= True, model_predictiu= True)
+#DataExploitation(mapa= True, model_predictiu= True)

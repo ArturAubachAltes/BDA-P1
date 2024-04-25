@@ -39,6 +39,6 @@ def DataFormatting(quines_act):
     con.close()
 
 
-quines_act = ["income_data", "sales_data", "shops_data"]
+#quines_act = ["income_data", "sales_data", "shops_data"]
 
-DataFormatting(quines_act)
+#DataFormatting(quines_act)

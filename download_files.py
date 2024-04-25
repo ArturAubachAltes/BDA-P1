@@ -30,7 +30,7 @@ def descargar_dataworld(quin_dels_dos: str = "income"):  # income o sales
     else:
         raise ValueError("quin_dels_dos debe ser 'income' o 'sales'")
 
-    token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9kLXVzZXItY2xpZW50OmFpbmFnbyIsImlzcyI6ImFnZW50OmFpbmFnbzo6NmI3ZGI0NmItZTM0NC00MDNhLWFmMGEtMjU1MGJjN2QyMjYwIiwiaWF0IjoxNzEzMzc3NTQ5LCJyb2xlIjpbInVzZXJfYXBpX3JlYWQiLCJ1c2VyX2FwaV93cml0ZSJdLCJnZW5lcmFsLXB1cnBvc2UiOnRydWUsInNhbWwiOnt9fQ.XKD28j69mJe4So0M3rxo1EiArAyc9GOnbWtvlsTA4ezsTlXbE_23wETBCFr5E0ua9ejdPEXvInPB6yMezhywcQ'
+    token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9kLXVzZXItY2xpZW50OmFkc3NkYWRhc2RhcyIsImlzcyI6ImFnZW50OmFkc3NkYWRhc2Rhczo6NWJkYTI3YTctZGEyMi00OWQxLTg0NzYtMTAwZTIzM2Q5ODViIiwiaWF0IjoxNzE0MDY3OTIwLCJyb2xlIjpbInVzZXJfYXBpX3JlYWQiLCJ1c2VyX2FwaV93cml0ZSJdLCJnZW5lcmFsLXB1cnBvc2UiOnRydWUsInNhbWwiOnt9fQ.wfslA5c1ESO7-E8VSmdEr0wMQbG-800XgM9QYIdjVAwhr072lV7Li2HxeWR5rh1PTqkdfOh4qNyqFa5IXrAkaA'
 
     file_url = f"https://download.data.world/file_download/{owner}/{dataset_id}/{file_name}"
 
