@@ -53,8 +53,9 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False):
     ###########
     ## SALES ##
     ###########
-    if sales == True:
-        #carregar taula de duckdb
+
+    if sales:
+        # Cargar la tabla desde DuckDB
         sales_df = spark.read \
             .format("jdbc") \
             .option("url", "jdbc:duckdb:formatted_zone.duckdb") \
@@ -62,20 +63,20 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False):
             .option("driver", "org.duckdb.DuckDBDriver") \
             .load()
 
-        # aplicar nateja noms columna
+        # Limpiar nombres de columnas y preprocesamiento
         cleaned_sales = sales_df.select([col(c).alias(clean_column_name(c)) for c in sales_df.columns])
+        sales_usa = cleaned_sales.filter(col("Country_/_Region") == "United States of America")
+        
+        # Eliminar duplicados excepto en la columna 'row', remover columnas no necesarias y eliminar filas con todos los datos missing
+        sales_usa = sales_usa.dropDuplicates([c for c in sales_usa.columns if c != "row"]) \
+                            .drop("Customer_Name") \
+                            .dropna(subset=["Postal_Code", "SubRegion"], how="any") \
+                            .dropna(how="all")
 
-        # preprocessing
-        sales_usa = cleaned_sales.filter(col("Country_/_Region") == "United States of America") # filtrar EEUU
-        sales_usa = sales_usa.dropDuplicates(subset=[col for col in sales_usa.columns if col != "row"]) # eliminar row
-        sales_usa = sales_usa.drop("Customer_Name") # eliminar customer_name
 
-        # no fa falta fer imputació de missings perque quan filtrem per USA no ens queden columnes amb missings
-        sales_usa = sales_usa.dropna(subset=["Postal_Code"]) # eliminar missings a postal_code
-        sales_usa = sales_usa.dropna(subset=["SubRegion"]) # eliminar missings a subregions
-        sales_usa = sales_usa.dropna(how="all") # eliminar files que missing a totes les columnes
+        sales_usa = sales_usa.withColumnRenamed("Postal_Code", "ZIPCODE")
 
-        # guardem taula
+        # Guardar el resultado en DuckDB
         sales_usa.write \
             .format("jdbc") \
             .option("url", "jdbc:duckdb:trusted_zone.duckdb") \
@@ -161,6 +162,9 @@ def DataQuality(income:bool= False, datasearch:bool= False, sales:bool= False):
         
         #Els que no shan pogut imputar s'eliminen
         shops = shops.filter(~(col("postcode").isNull()))
+
+
+        shops = shops.withColumnRenamed("postcode", "ZIPCODE")
             
         # guardem taula
         shops.write \

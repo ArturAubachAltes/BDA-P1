@@ -1,11 +1,12 @@
 from download_files import *
 import re
 
-datasets = {'income': descargar_dataworld,
+
+def datacollectors(income= False, datasearch= False, sales= False):
+    datasets = {'income': descargar_dataworld,
             'shops' : descargar_datasearch,
             'sales' : descargar_dataworld}
 
-def datacollectors(income= False, datasearch= False, sales= False):
     for nom, funcio in datasets.items():
 
         skip = False    
